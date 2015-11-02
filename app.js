@@ -24,10 +24,10 @@ let gatherData = (url) =>{
         link = "https://en.wikipedia.org" + link
         let registryNumber =  parseInt($(this).find('th>small').text());
         let geoLocale = $(this).find('.geo-dms')
-        let imgURL;
+        let image;
         let img = $(this).find('td div.center a>img').attr('src')
         if (img){
-          imgURL = `https:${img}`
+          image = `https:${img}`
         }
         let latitude, longitude, location;
         if (geoLocale.text()){
@@ -39,7 +39,7 @@ let gatherData = (url) =>{
           location = `${address}, ${city}, CA`
         }
         let name = $(this).find('td:nth-child(3)>a').text()
-        let obj = {name, link, registryNumber, latitude, longitude, location, imgURL}
+        let obj = {name, link, registryNumber, latitude, longitude, location, image}
         if (obj.name) json.landmarks.push(obj)
       })
       index++
