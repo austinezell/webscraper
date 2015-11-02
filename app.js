@@ -1,11 +1,10 @@
 'use strict'
 
-let stringify = require('json-stringify-safe')
-let express = require('express')
 let fs = require('fs')
 let request = require('request')
 let cheerio = require('cheerio')
 let index = 0
+
 let data = JSON.parse(fs.readFileSync('./county.json', 'utf8'));
 let json = {landmarks: []}
 
@@ -19,12 +18,28 @@ let gatherData = (url) =>{
   request(url, (err, response, html)=>{
     if(!err){
       let $ = cheerio.load(html)
-      let tableRow = $('.wikitable .vcard')
+      let tableRow = $('table.wikitable tr.vcard')
       tableRow.each(function(i){
+        let link = $(this).find('td:nth-child(3)>a').attr('href')
+        link = "https://en.wikipedia.org" + link
+        let registryNumber =  parseInt($(this).find('th>small').text());
         let geoLocale = $(this).find('.geo-dms')
-        let name = $(this).find('td:nth-child(3)').text()
-        let location = geoLocale.text() ? geoLocale.text() : $(this).find('td:nth-child(4)').text()
-        let obj = {name: name, location: location}
+        let imgURL;
+        let img = $(this).find('td div.center a>img').attr('src')
+        if (img){
+          imgURL = `https:${img}`
+        }
+        let latitude, longitude, location;
+        if (geoLocale.text()){
+          latitude = geoLocale.find('.latitude').text()
+          longitude = geoLocale.find('.longitude').text()
+        }else {
+          let address = $(this).find('.adr>span.label').text()
+          let city = $(this).find('td:nth-child(5)').text()
+          location = `${address}, ${city}, CA`
+        }
+        let name = $(this).find('td:nth-child(3)>a').text()
+        let obj = {name, link, registryNumber, latitude, longitude, location, imgURL}
         if (obj.name) json.landmarks.push(obj)
       })
       index++
