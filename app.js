@@ -39,7 +39,7 @@ let gatherData = (url) =>{
           location = `${address}, ${city}, CA`
         }
         let name = $(this).find('td:nth-child(3)>a').text()
-        let obj = {name, link, registryNumber, latitude, longitude, location, image}
+        let obj = {name, wikiLink, registryNumber, latitude, longitude, location, image}
         if (obj.name) json.landmarks.push(obj)
       })
       index++
