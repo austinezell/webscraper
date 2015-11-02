@@ -20,8 +20,8 @@ let gatherData = (url) =>{
       let $ = cheerio.load(html)
       let tableRow = $('table.wikitable tr.vcard')
       tableRow.each(function(i){
-        let link = $(this).find('td:nth-child(3)>a').attr('href')
-        link = "https://en.wikipedia.org" + link
+        let wikiLink = $(this).find('td:nth-child(3)>a').attr('href')
+        wikiLink = "https://en.wikipedia.org" + wikiLink
         let registryNumber =  parseInt($(this).find('th>small').text());
         let geoLocale = $(this).find('.geo-dms')
         let image;
