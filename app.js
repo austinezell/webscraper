@@ -6,37 +6,36 @@ let fs = require('fs')
 let request = require('request')
 let cheerio = require('cheerio')
 
+let json = {landmarks: []}
+let data = JSON.parse(fs.readFileSync('./county.json', 'utf8'));
 
-let url = `https://en.wikipedia.org/wiki/California_Historical_Landmarks_in_Alameda_County,_California`
-
-let json = {table: ''}
-request(url, (err, response, html)=>{
-  if(!err){
-
-    let $ = cheerio.load(html)
-
-    let data = $('table.wikitable').children()
-    json.table = data
-    // console.log(data);
-  }
-  // let obj
-  var cache = [];
-
-  var obj = JSON.stringify(json, function(key, value) {
-      if (typeof value === 'object' && value !== null) {
-          if (cache.indexOf(value) !== -1) {
-              // Circular reference found, discard key
-              return;
-          }
-          // Store value in our collection
-          cache.push(value);
-      }
-      return value;
-  });
-  cache = null
-  fs.writeFile('data.json', obj, function(err){
-    console.log('Successfully written');
+let writeToFile = () =>{
+  console.log('hit');
+  fs.appendFile('data.json', JSON.stringify(json), function(err){
+    console.log('hit');
   })
-});
+}
 
+let gatherData = (url, i) =>{
+  request(url, (err, response, html)=>{
+    if(!err){
+      let $ = cheerio.load(html)
+      let tableRow = $('.wikitable .vcard')
+      tableRow.each(function(i){
+        let geoLocale = $(this).find('.geo-dms')
+        let name = $(this).find('td:nth-child(3)').text()
+        let location = geoLocale.text() ? geoLocale.text() : $(this).find('td:nth-child(4)').text()
+        let obj = {name: name, location: location}
+        if (obj.name) json.landmarks.push(obj)
+      })
+    }
+    writeToFile()
+  });
+}
+
+
+data.counties.forEach( (county, i) =>{
+  let url = `https://en.wikipedia.org/wiki/California_Historical_Landmarks_in_${county}_County,_California`
+  gatherData(url, i)
+})
 // })
