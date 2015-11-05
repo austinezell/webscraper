@@ -27,23 +27,24 @@ let gatherData = (url) =>{
         let image;
         let img = $(this).find('td div.center a>img').attr('src')
         if (img){
-          image = `https:${img}`
-        }
+          img = img.replace(/100px/, "240px");
+          image = `https:${img}`;
+        };
         let latitude, longitude, location;
         if (geoLocale.text()){
-          latitude = geoLocale.find('.latitude').text()
-          longitude = geoLocale.find('.longitude').text()
+          latitude = geoLocale.find('.latitude').text();
+          longitude = geoLocale.find('.longitude').text();
         }else {
-          let address = $(this).find('.adr>span.label').text()
-          let city = $(this).find('td:nth-child(5)').text()
-          location = `${address}, ${city}, CA`
+          let address = $(this).find('.adr>span.label').text();
+          let city = $(this).find('td:nth-child(5)').text();
+          location = `${address}, ${city}, CA`;
         }
-        let name = $(this).find('td:nth-child(3)>a').text()
-        let obj = {name, wikiLink, registryNumber, latitude, longitude, location, image}
-        if (obj.name) json.landmarks.push(obj)
+        let name = $(this).find('td:nth-child(3)>a').text();
+        let obj = {name, wikiLink, registryNumber, latitude, longitude, location, image};
+        if (obj.name) json.landmarks.push(obj);
       })
-      index++
-      if (index === data.counties.length) writeFile()
+      index++;
+      if (index === data.counties.length) writeFile();
     }
   });
 }
