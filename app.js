@@ -30,15 +30,15 @@ let gatherData = (url) =>{
           img = img.replace(/100px/, "240px");
           image = `https:${img}`;
         };
-        let latitude, longitude, location;
+        let latitude, longitude;
         if (geoLocale.text()){
           latitude = geoLocale.find('.latitude').text();
           longitude = geoLocale.find('.longitude').text();
-        }else {
-          let address = $(this).find('.adr>span.label').text();
-          let city = $(this).find('td:nth-child(5)').text();
-          location = `${address}, ${city}, CA`;
         }
+        let address = $(this).find('.adr>span.label').text();
+        let city = $(this).find('td:nth-child(5)').text();
+        let location = `${address}, ${city}, CA`;
+        
         let name = $(this).find('td:nth-child(3)>a').text();
         let obj = {name, wikiLink, registryNumber, latitude, longitude, location, image};
         if (obj.name) json.landmarks.push(obj);
